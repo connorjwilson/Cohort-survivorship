@@ -1,4 +1,3 @@
-setwd("~/UC Berkeley/Research/SA-diversification")
 library(divDyn)
 data(keys)
 data(stages)
