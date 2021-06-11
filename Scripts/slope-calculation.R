@@ -10,6 +10,6 @@ for (i in 1:14){
 }
 
 na_fit1 <- lm(na_cohort[,1] ~ stages$mid[81+i:81+max(which(na_cohort[,i]>0))])
-
 na_fit2 <- lm(log(na_cohort[1:max(which(na_cohort[,i]>0)),1]) ~ neg_stages[82:87])
 
+neg_stages[81+1 : 81+max(which(na_cohort[,1]>0))]
