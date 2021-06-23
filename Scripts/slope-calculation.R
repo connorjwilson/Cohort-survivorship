@@ -26,3 +26,23 @@ abline(na_result)
 
 plot(stages[82:95,9], na_slopes)
 plot(neg_stages[82:95], stages[82:95,9])
+
+
+## South America
+
+sa_cohort <- surv[82:95,82:95]
+
+sa_fits <- list()
+for (i in 1:14) {
+  sa_fits[[i]] <- lm(log(sa_cohort[i:max(which(sa_cohort[,i]>0)),i])
+                     ~ neg_stages[(81+i):(81+max(which(sa_cohort[,i]>0)))])
+}
+
+sa_slopes <- vector()
+for (i in 1:14) {
+  sa_slopes[i] <- sa_fits[[i]]$coefficients[1]
+}
+
+sa_result <- lm (sa_slopes ~ neg_stages[82:95])
+plot(neg_stages[82:95], sa_slopes)
+abline(sa_result)
