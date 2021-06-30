@@ -33,7 +33,7 @@ for (i in 1:12) {
   na_slopes[i] <- na_fits[[i]]$coefficients[2]
 }
 
-### Plots slope vs time over Cenozoic
+
 na_result <- lm(na_slopes ~ neg_stages[82:93])
 plot(neg_stages[82:93], na_slopes)
 abline(na_result)
@@ -57,7 +57,16 @@ plot(neg_stages[82:95], stages[82:95,9])
 ## South America
 ####################
 
-sa_cohort <- surv[82:95,82:95]
+sa_data <- read.csv("Data/pbdb_sa.csv", skip = 21, header = TRUE)
+
+stgMin <- categorize(sa_data[,"early_interval"], keys$stgInt)
+stgMax <- categorize(sa_data[,"late_interval"], keys$stgInt)
+stgMin <- as.numeric(stgMin)
+stgMax <- as.numeric(stgMax)
+
+sa_surv <- survivors(data, bin='stg', tax='accepted_name')
+
+sa_cohort <- sa_surv[82:95,82:95]
 
 sa_fits <- list()
 for (i in 1:14) {
@@ -66,12 +75,12 @@ for (i in 1:14) {
 }
 
 sa_slopes <- vector()
-for (i in 1:14) {
+for (i in 1:12) {
   sa_slopes[i] <- sa_fits[[i]]$coefficients[2]
 }
 
-sa_result <- lm (sa_slopes ~ neg_stages[82:95])
-plot(neg_stages[82:95], sa_slopes)
+sa_result <- lm (sa_slopes ~ neg_stages[82:93])
+plot(neg_stages[82:93], sa_slopes, type="b")
 abline(sa_result)
 
 ##############
@@ -172,3 +181,36 @@ for (i in 1:12) {
 as_result <- lm(as_slopes ~ neg_stages[82:93])
 plot(neg_stages[82:93], as_slopes)
 abline(as_result)
+
+##################
+## Australia
+##################
+
+au_data <- read.csv("Data/pbdb_au.csv", skip = 21, header = TRUE)
+
+stgMin <- categorize(au_data[,"early_interval"], keys$stgInt)
+stgMax <- categorize(au_data[,"late_interval"], keys$stgInt)
+stgMin <- as.numeric(stgMin)
+stgMax <- as.numeric(stgMax)
+
+au_data$stg <- rep(NA, nrow(au_data))
+stgCondition <- c(which(stgMax==stgMin), which(stgMax==-1))
+au_data$stg[stgCondition] <- stgMin[stgCondition]
+
+au_surv <- survivors(au_data, bin='stg', tax='accepted_name')
+au_cohort <- au_surv[82:95,82:95]
+
+au_fits <- list()
+for (i in 1:14) {
+  au_fits[[i]] <- lm(log(au_cohort[i:max(which(au_cohort[,i]>0)),i])
+                     ~ neg_stages[(81+i):(81+max(which(au_cohort[,i]>0)))])
+}
+
+au_slopes <- vector()
+for (i in 1:12) {
+  au_slopes[i] <- au_fits[[i]]$coefficients[2]
+}
+
+au_result <- lm(au_slopes ~ neg_stages[82:93])
+plot(neg_stages[82:93], au_slopes)
+abline(au_result)
