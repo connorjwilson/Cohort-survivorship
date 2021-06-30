@@ -3,7 +3,7 @@ data(keys)
 data(stages)
 
 data <- read.csv("Data/pbdb_na.csv", skip = 20, header = TRUE)
-?surdata <- read.csv("Data/pbdb_sa.csv", skip = 21, header = TRUE)
+data <- read.csv("Data/pbdb_sa.csv", skip = 21, header = TRUE)
 
 stgMin <- categorize(data[,"early_interval"], keys$stgInt)
 stgMax <- categorize(data[,"late_interval"], keys$stgInt)
