@@ -11,15 +11,18 @@ neg_stages <- -1 * stages$mid
 ## North America
 ####################
 
-data <- read.csv("Data/pbdb_na.csv", skip = 20, header = TRUE)
+na_data <- read.csv("Data/pbdb_na.csv", skip = 20, header = TRUE)
 
-stgMin <- categorize(data[,"early_interval"], keys$stgInt)
-stgMax <- categorize(data[,"late_interval"], keys$stgInt)
+stgMin <- categorize(na_data[,"early_interval"], keys$stgInt)
+stgMax <- categorize(na_data[,"late_interval"], keys$stgInt)
 stgMin <- as.numeric(stgMin)
 stgMax <- as.numeric(stgMax)
 
-surv <- survivors(data, bin='stg', tax='accepted_name')
+na_data$stg <- rep(NA, nrow(na_data))
+stgCondition <- c(which(stgMax==stgMin), which(stgMax==-1))
+na_data$stg[stgCondition] <- stgMin[stgCondition]
 
+surv <- survivors(data, bin='stg', tax='accepted_name')
 na_cohort <- surv[82:95,82:95]
 
 na_fits <- list()
@@ -40,18 +43,18 @@ abline(na_result)
 
 ### Plots Slope of each cohort
 
-pdf("Cohorts.pdf",height = 20, width = 3)
-par(mfrow = c(13,1), mar = c(3, 3, 0, 0.5))
-for (i in 1:13) {
-  plot(log(na_cohort[i:max(which(na_cohort[,i]>0)),i])
-       ~ neg_stages[(81+i):(81+max(which(na_cohort[,i]>0)))], 
-       ylim = c(-6,0), xlim = c(-70,0))
-  abline(na_fits[[i]])
-}
-dev.off()
+# pdf("Cohorts.pdf",height = 20, width = 3)
+# par(mfrow = c(13,1), mar = c(3, 3, 0, 0.5))
+# for (i in 1:13) {
+#   plot(log(na_cohort[i:max(which(na_cohort[,i]>0)),i])
+#        ~ neg_stages[(81+i):(81+max(which(na_cohort[,i]>0)))], 
+#        ylim = c(-6,0), xlim = c(-70,0))
+#   abline(na_fits[[i]])
+# }
+# dev.off()
 
-plot(stages[82:95,9], na_slopes)
-plot(neg_stages[82:95], stages[82:95,9])
+# plot(stages[82:95,9], na_slopes)
+# plot(neg_stages[82:95], stages[82:95,9])
 
 ####################
 ## South America
@@ -64,8 +67,11 @@ stgMax <- categorize(sa_data[,"late_interval"], keys$stgInt)
 stgMin <- as.numeric(stgMin)
 stgMax <- as.numeric(stgMax)
 
-sa_surv <- survivors(data, bin='stg', tax='accepted_name')
+sa_data$stg <- rep(NA, nrow(sa_data))
+stgCondition <- c(which(stgMax==stgMin), which(stgMax==-1))
+sa_data$stg[stgCondition] <- stgMin[stgCondition]
 
+sa_surv <- survivors(data, bin='stg', tax='accepted_name')
 sa_cohort <- sa_surv[82:95,82:95]
 
 sa_fits <- list()
@@ -135,19 +141,19 @@ af_surv <- survivors(af_data, bin='stg', tax='accepted_name')
 af_cohort <- af_surv[82:95,82:95]
 
 af_fits <- list()
-for (i in 1:14) {
+for (i in 2:14) {
   af_fits[[i]] <- lm(log(af_cohort[i:max(which(af_cohort[,i]>0)),i])
                      ~ neg_stages[(81+i):(81+max(which(af_cohort[,i]>0)))])
 }
 
 af_slopes <- vector()
-for (i in 1:12) {
-  eu_slopes[i] <- eu_fits[[i]]$coefficients[2]
+for (i in 2:12) {
+  af_slopes[i] <- af_fits[[i]]$coefficients[2]
 }
 
-eu_result <- lm(eu_slopes ~ neg_stages[82:93])
-plot(neg_stages[82:93], eu_slopes)
-abline(eu_result)
+af_result <- lm(af_slopes ~ neg_stages[82:93])
+plot(neg_stages[82:93], af_slopes, type="b")
+abline(af_result)
 
 ###############
 ## Asia
@@ -202,12 +208,17 @@ au_cohort <- au_surv[82:95,82:95]
 
 au_fits <- list()
 for (i in 1:14) {
+  if (i %in% c(1, 2, 4, 5, 6)) {
+    au_fits[[i]] <- NA
+  } else {
   au_fits[[i]] <- lm(log(au_cohort[i:max(which(au_cohort[,i]>0)),i])
                      ~ neg_stages[(81+i):(81+max(which(au_cohort[,i]>0)))])
+  }
 }
 
 au_slopes <- vector()
 for (i in 1:12) {
+  if (!is.na(au_fits[[i]]))
   au_slopes[i] <- au_fits[[i]]$coefficients[2]
 }
 
