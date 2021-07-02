@@ -112,4 +112,33 @@ abline(eusp_result)
 
 #######################
 ## Asia
-############
+#######################
+
+assp_data <- read.csv("Data/pbdb_as_sp.csv", skip = 20, header = TRUE)
+
+stgMin <- categorize(assp_data[,"early_interval"], keys$stgInt)
+stgMax <- categorize(assp_data[,"late_interval"], keys$stgInt)
+stgMin <- as.numeric(stgMin)
+stgMax <- as.numeric(stgMax)
+
+assp_data$stg <- rep(NA, nrow(assp_data))
+stgCondition <- c(which(stgMax==stgMin), which(stgMax==-1))
+assp_data$stg[stgCondition] <- stgMin[stgCondition]
+
+assp_surv <- survivors(assp_data, bin='stg', tax='accepted_name')
+assp_cohort <- assp_surv[82:95,82:95]
+
+assp_fits <- list()
+for (i in 1:14) {
+  assp_fits[[i]] <- lm(log(assp_cohort[i:max(which(assp_cohort[,i]>0)),i])
+                       ~ neg_stages[(81+i):(81+max(which(assp_cohort[,i]>0)))])
+}
+
+assp_slopes <- vector()
+for (i in 1:12) {
+  assp_slopes[i] <- assp_fits[[i]]$coefficients[2]
+}
+
+assp_result <- lm(assp_slopes ~ neg_stages[82:93])
+plot(neg_stages[82:93], assp_slopes, type="b")
+abline(assp_result)

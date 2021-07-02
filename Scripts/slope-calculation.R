@@ -1,6 +1,7 @@
 #########################
 # slope-calculation.R
 #########################
+
 library(divDyn)
 data(keys)
 data(stages)
@@ -22,7 +23,7 @@ na_data$stg <- rep(NA, nrow(na_data))
 stgCondition <- c(which(stgMax==stgMin), which(stgMax==-1))
 na_data$stg[stgCondition] <- stgMin[stgCondition]
 
-surv <- survivors(data, bin='stg', tax='accepted_name')
+surv <- survivors(na_data, bin='stg', tax='accepted_name')
 na_cohort <- surv[82:95,82:95]
 
 na_fits <- list()
@@ -71,7 +72,7 @@ sa_data$stg <- rep(NA, nrow(sa_data))
 stgCondition <- c(which(stgMax==stgMin), which(stgMax==-1))
 sa_data$stg[stgCondition] <- stgMin[stgCondition]
 
-sa_surv <- survivors(data, bin='stg', tax='accepted_name')
+sa_surv <- survivors(sa_data, bin='stg', tax='accepted_name')
 sa_cohort <- sa_surv[82:95,82:95]
 
 sa_fits <- list()
