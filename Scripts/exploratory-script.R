@@ -1,9 +1,9 @@
-setwd("~/UC Berkeley/Research/SA-diversification")
 library(divDyn)
 data(keys)
 data(stages)
 
-data <- read.csv("pbdb_data_na.csv", skip = 20, header = TRUE)
+data <- read.csv("Data/pbdb_na.csv", skip = 20, header = TRUE)
+data <- read.csv("Data/pbdb_sa.csv", skip = 21, header = TRUE)
 
 stgMin <- categorize(data[,"early_interval"], keys$stgInt)
 stgMax <- categorize(data[,"late_interval"], keys$stgInt)
