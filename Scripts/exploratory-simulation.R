@@ -16,7 +16,7 @@ library(tidyr)
 test_fl <- fadlad(data, 'accepted_name', 'stg')
 ########################
 
-
+ranges_df <- as.data.frame(ranges_data)
 ranges_df1 <- ranges_df[!is.na(ranges_df$FAD),]
 
 # classify <- function (input){
@@ -59,3 +59,20 @@ tsplot(stages, shading="series", boxes="sys",
        ylim=c(0.01,1),plot.args=list(log="y"))
 for(i in 1:ncol(sim_surv)) lines(stages$mid, sim_surv[,i])
 
+sim_cohort <- sim_surv[82:95, 82:95]
+
+sim_fits <- list()
+for (i in 1:14) {
+  sim_fits[[i]] <- lm(log(sim_cohort[i:max(which(sim_cohort[,i]>0)),i])
+                     ~ neg_stages[(81+i):(81+max(which(sim_cohort[,i]>0)))])
+}
+
+sim_slopes <- vector()
+for (i in 1:12) {
+  sim_slopes[i] <- sim_fits[[i]]$coefficients[2]
+}
+
+
+sim_result <- lm(sim_slopes ~ neg_stages[82:93])
+plot(neg_stages[82:93], sim_slopes, type="b")
+abline(sim_result)
