@@ -5,6 +5,13 @@ test <- simFossilRecord(p = 0.25, q = 0.25, r = 0.1, startTaxa = 100,
                         nExtant = c(0,Inf), nSamp = c(0,Inf), print.runs = T, 
                         plot = T)
 
+test <- simFossilRecord(p = 0.25, q = 0.25, r = "0.902 + 0.006059 * T + 0.00006036 * T^2",
+                        startTaxa = 100, 
+                        totalTime = 66, nTotalTaxa = c(0,Inf), 
+                        nExtant = c(0,Inf), nSamp = c(0,Inf), print.runs = T, 
+                        plot = T)
+
+
 ranges_data <- fossilRecord2fossilRanges(test, ranges.only=TRUE)
 
 
